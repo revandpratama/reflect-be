@@ -6,7 +6,10 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/rs/zerolog/log"
+	"github.com/joho/godotenv"
+	"github.com/revandpratama/reflect/auth-service/adapter"
+	"github.com/revandpratama/reflect/auth-service/config"
+	"github.com/revandpratama/reflect/auth-service/helper"
 )
 
 type Server struct {
@@ -23,17 +26,31 @@ func NewServer() *Server {
 
 func main() {
 	server := NewServer()
-
 	server.start()
 
-	select {
-	case sig := <-server.shutdown:
-		log.Info().Msg(fmt.Sprintf("Server shutting down, cause: %v", sig))
-	case err := <-server.errorOccured:
-		log.Error().Msg(fmt.Sprintf("Error starting server, cause: %v", err))
+	err := godotenv.Load()
+	if err != nil {
+		server.errorOccured <- err
 	}
 
-	server.cleanup()
+	// * load global config
+	config.LoadConfig()
+
+	// * initialize adapters
+	a, err := adapter.NewAdapter(&adapter.PostgresOption{})
+	if err != nil {
+		server.errorOccured <- err
+	}
+
+	helper.NewLog("INFO", "server running.")
+	select {
+	case sig := <-server.shutdown:
+		helper.NewLog("INFO", fmt.Sprintf("Server shutting down, cause: %v", sig))
+	case err := <-server.errorOccured:
+		helper.NewLog("FATAL", fmt.Sprintf("Error starting server, cause: %v", err))
+	}
+
+	server.cleanup(a)
 }
 
 func (s *Server) start() {
@@ -41,6 +58,12 @@ func (s *Server) start() {
 
 }
 
-func (s *Server) cleanup() {
+func (s *Server) cleanup(a *adapter.Adapter) {
+	helper.NewLog("INFO", "cleaning up resources...")
 
+	a.Close(
+		&adapter.PostgresOption{},
+	)
+
+	helper.NewLog("INFO", "resource cleaned up")
 }
