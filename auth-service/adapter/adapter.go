@@ -3,12 +3,14 @@ package adapter
 import (
 	"fmt"
 
+	"google.golang.org/grpc"
 	"gorm.io/gorm"
 )
 
 type Adapter struct {
 	// * adapter list
 	Postgres *gorm.DB
+	GrcpServer *grpc.Server
 }
 
 type Option interface {
