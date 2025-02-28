@@ -40,7 +40,12 @@ func (server *Server) start() {
 	config.LoadConfig()
 
 	// * initialize adapters
-	a, err := adapter.NewAdapter(&adapter.PostgresOption{})
+	postgresOption := &adapter.PostgresOption{}
+	grpcOption := &adapter.GRPCOption{}
+	a, err := adapter.NewAdapter(
+		postgresOption,
+		grpcOption,
+	)
 	if err != nil {
 		server.errorOccured <- err
 	}
@@ -53,18 +58,15 @@ func (server *Server) start() {
 		helper.NewLog().Fatal(fmt.Sprintf("Error starting server, cause: %v", err)).ToKafka()
 	}
 
-	server.cleanup(a)
-
-}
-
-func (s *Server) cleanup(a *adapter.Adapter) {
 	helper.NewLog().Info("shutting down server...")
 	helper.NewLog().Info("cleaning up resources...")
 
 	a.Close(
-		&adapter.PostgresOption{},
+		postgresOption,
+		grpcOption,
 	)
 
 	helper.NewLog().Info("resources cleaned up")
 	helper.NewLog().Info("server stopped").ToKafka()
+
 }
