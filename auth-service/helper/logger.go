@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/rs/zerolog/log"
@@ -13,30 +14,35 @@ type Log struct {
 	Timestamp time.Time
 }
 
-func NewLog(level, msg string) {
-	switch level {
-	case "INFO":
-		log.Info().Msg(msg)
-	case "WARN":
-		log.Warn().Msg(msg)
-	case "ERROR":
-		log.Error().Msg(msg)
-	case "FATAL":
-		log.Fatal().Msg(msg)
-	default:
-		log.Info().Msg(msg)
-	}
-
-	fullLog := Log{
-		Level: level,
-		Msg: msg,
-		Source: "auth-service",
+func NewLog() *Log {
+	return &Log{
 		Timestamp: time.Now(),
+		Source: "auth-service",
 	}
-
-	produceToKafka(fullLog)
 }
 
-func produceToKafka(fullLog Log) {
+func (l *Log) Info(msg string) *Log {
+	l.Level = "INFO"
+	l.Msg = msg
 
+	log.Info().Msg(msg)
+	return l
+}
+func (l *Log) Fatal(msg string) *Log {
+	l.Level = "FATAL"
+	l.Msg = msg
+
+	log.Fatal().Msg(msg)
+	return l
+}
+func (l *Log) Error(msg string) *Log {
+	l.Level = "ERROR"
+	l.Msg = msg
+
+	log.Error().Msg(msg)
+	return l
+}
+
+func (l *Log) ToKafka() {
+	fmt.Println("produced to kafka")
 }
