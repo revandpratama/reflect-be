@@ -35,12 +35,9 @@ func (p *PostgresOption) Start(a *Adapter) error {
 }
 
 func (p *PostgresOption) Stop() error {
-	if p.db != nil {
-		sqlDB, err := p.db.DB()
-		if err != nil {
-			return fmt.Errorf("failed to get SQL DB from GORM: %w", err)
-		}
-		return sqlDB.Close()
+	sqlDB, err := p.db.DB()
+	if err != nil {
+		return fmt.Errorf("failed to get SQL DB from GORM: %w", err)
 	}
-	return nil
+	return sqlDB.Close()
 }
