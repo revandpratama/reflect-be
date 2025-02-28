@@ -27,7 +27,10 @@ func NewServer() *Server {
 func main() {
 	server := NewServer()
 	server.start()
+}
 
+func (server *Server) start() {
+	signal.Notify(server.shutdown, os.Interrupt, syscall.SIGTERM)
 	err := godotenv.Load()
 	if err != nil {
 		server.errorOccured <- err
@@ -51,14 +54,11 @@ func main() {
 	}
 
 	server.cleanup(a)
-}
-
-func (s *Server) start() {
-	signal.Notify(s.shutdown, os.Interrupt, syscall.SIGTERM)
 
 }
 
 func (s *Server) cleanup(a *adapter.Adapter) {
+	helper.NewLog().Info("shutting down server...")
 	helper.NewLog().Info("cleaning up resources...")
 
 	a.Close(
@@ -66,4 +66,5 @@ func (s *Server) cleanup(a *adapter.Adapter) {
 	)
 
 	helper.NewLog().Info("resources cleaned up")
+	helper.NewLog().Info("server stopped").ToKafka()
 }
