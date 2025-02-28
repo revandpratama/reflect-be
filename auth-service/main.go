@@ -42,12 +42,12 @@ func main() {
 		server.errorOccured <- err
 	}
 
-	helper.NewLog("INFO", "server running.")
+	helper.NewLog().Info("server running").ToKafka()
 	select {
 	case sig := <-server.shutdown:
-		helper.NewLog("INFO", fmt.Sprintf("Server shutting down, cause: %v", sig))
+		helper.NewLog().Info(fmt.Sprintf("Server shutting down, cause: %v", sig)).ToKafka()
 	case err := <-server.errorOccured:
-		helper.NewLog("FATAL", fmt.Sprintf("Error starting server, cause: %v", err))
+		helper.NewLog().Fatal(fmt.Sprintf("Error starting server, cause: %v", err)).ToKafka()
 	}
 
 	server.cleanup(a)
@@ -59,11 +59,11 @@ func (s *Server) start() {
 }
 
 func (s *Server) cleanup(a *adapter.Adapter) {
-	helper.NewLog("INFO", "cleaning up resources...")
+	helper.NewLog().Info("cleaning up resources...")
 
 	a.Close(
 		&adapter.PostgresOption{},
 	)
 
-	helper.NewLog("INFO", "resource cleaned up")
+	helper.NewLog().Info("resources cleaned up")
 }
