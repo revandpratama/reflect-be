@@ -12,6 +12,8 @@ type Config struct {
 	DBName     string
 	DBSSLMode  string
 
+	SecretKey string
+
 	GRPCServerPort string
 }
 
@@ -25,6 +27,8 @@ func LoadConfig() {
 		DBPassword: os.Getenv("DBPassword"),
 		DBName:     os.Getenv("DBName"),
 		DBSSLMode:  os.Getenv("DBSSLMode"),
+
+		SecretKey: os.Getenv("SecretKey"),
 
 		GRPCServerPort: os.Getenv("GRPCServerPort"),
 	}
