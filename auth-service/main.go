@@ -40,15 +40,19 @@ func (server *Server) start() {
 	config.LoadConfig()
 
 	// * initialize adapters
+	kafkaOption := &adapter.KafkaGoOption{}
 	postgresOption := &adapter.PostgresOption{}
 	grpcOption := &adapter.GRPCOption{}
 	a, err := adapter.NewAdapter(
+		kafkaOption,
 		postgresOption,
 		grpcOption,
 	)
 	if err != nil {
 		server.errorOccured <- err
 	}
+
+	adapter.Adapters = a
 
 	helper.NewLog().Info("server running").ToKafka()
 	select {
@@ -64,6 +68,7 @@ func (server *Server) start() {
 	a.Close(
 		postgresOption,
 		grpcOption,
+		kafkaOption,
 	)
 
 	helper.NewLog().Info("resources cleaned up")
