@@ -15,6 +15,11 @@ type Config struct {
 	SecretKey string
 
 	GRPCServerPort string
+
+	KafkaHost     string
+	KafkaPort     string
+	KafkaClientID string
+	KafkaTopic    string
 }
 
 var ENV *Config
@@ -31,5 +36,10 @@ func LoadConfig() {
 		SecretKey: os.Getenv("SecretKey"),
 
 		GRPCServerPort: os.Getenv("GRPCServerPort"),
+
+		KafkaHost:     os.Getenv("KafkaHost"),
+		KafkaPort:     os.Getenv("KafkaPort"),
+		KafkaClientID: os.Getenv("KafkaClientID"),
+		KafkaTopic:    os.Getenv("KafkaTopic"),
 	}
 }
