@@ -22,3 +22,7 @@ type Role struct {
 	ID   int `gorm:"datatype:serial;primaryKey"`
 	Name string
 }
+
+func (User) TableName() string {
+	return "authentication.users"
+}
