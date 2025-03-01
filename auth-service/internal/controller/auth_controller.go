@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 
+	"github.com/revandpratama/reflect/auth-service/internal/dto"
 	pb "github.com/revandpratama/reflect/auth-service/internal/generatedProtobuf/auth"
 	"github.com/revandpratama/reflect/auth-service/internal/services"
 	"google.golang.org/grpc/codes"
@@ -27,4 +28,22 @@ func (c *authController) Login(ctx context.Context, req *pb.LoginRequest) (*pb.L
 	}
 
 	return &pb.LoginResponse{AccessToken: token}, nil
+}
+
+func (c *authController) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
+
+	request := dto.RegisterRequest{
+		RoleID:   int(req.RoleId),
+		Name:     req.Name,
+		Email:    req.Email,
+		Password: req.Password,
+	}
+
+	if err := c.service.Register(ctx, request); err != nil {
+		return nil, status.Errorf(codes.Internal, "unable to create new user: %v", err)
+	}
+
+	return &pb.RegisterResponse{
+		Message: "user created successfully",
+	}, nil
 }
