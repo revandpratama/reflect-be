@@ -38,7 +38,6 @@ func CreateToken(user entities.User) (string, error) {
 	token.SetString("user_id", strconv.Itoa(user.ID))
 	token.SetString("role_id", strconv.Itoa(user.RoleID))
 	token.SetString("name", user.Name)
-	token.SetString("username", user.Username)
 	token.SetString("email", user.Email)
 
 	encrypted := token.V4Encrypt(secretKey, nil)

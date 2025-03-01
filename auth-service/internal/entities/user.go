@@ -9,7 +9,6 @@ import (
 type User struct {
 	ID        int    `gorm:"primaryKey;datatype:serial"`
 	RoleID    int    `gorm:"column:role_id"`
-	Username  string `gorm:"unique"`
 	Name      string
 	Email     string `gorm:"unique"`
 	Password  string
