@@ -3,9 +3,14 @@ package adapter
 import (
 	"fmt"
 	"net"
+	"os"
 
 	"github.com/revandpratama/reflect/auth-service/config"
 	"github.com/revandpratama/reflect/auth-service/helper"
+	"github.com/revandpratama/reflect/auth-service/internal/controller"
+	pb "github.com/revandpratama/reflect/auth-service/internal/generatedProtobuf/auth"
+	"github.com/revandpratama/reflect/auth-service/internal/repositories"
+	"github.com/revandpratama/reflect/auth-service/internal/services"
 	"google.golang.org/grpc"
 )
 
@@ -24,11 +29,17 @@ func (g *GRPCOption) Start(a *Adapter) error {
 
 	g.GrcpServer = grpc.NewServer()
 
+	repo := repositories.NewAuthRepository(a.Postgres)
+	service := services.NewAuthService(repo)
+
+	pb.RegisterAuthServiceServer(g.GrcpServer, controller.NewAuthController(service))
+
 	go func() {
 
 		if err := g.GrcpServer.Serve(listener); err != nil {
 			// Handle server failure
-			fmt.Printf("Failed to serve gRPC: %v\n", err)
+			helper.NewLog().Fatal(fmt.Sprintf("Failed to start gRPC server: %v", err)).ToKafka()
+			os.Exit(1)
 		}
 
 	}()
