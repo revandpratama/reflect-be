@@ -3,14 +3,16 @@ package adapter
 import (
 	"fmt"
 
+	"github.com/segmentio/kafka-go"
 	"google.golang.org/grpc"
 	"gorm.io/gorm"
 )
 
 type Adapter struct {
 	// * adapter list
-	Postgres *gorm.DB
+	Postgres   *gorm.DB
 	GrcpServer *grpc.Server
+	KafkaGo    *kafka.Writer
 }
 
 type Option interface {
@@ -18,11 +20,11 @@ type Option interface {
 	Stop() error
 }
 
+var Adapters *Adapter
 
 func NewAdapter(opts ...Option) (*Adapter, error) {
 	a := &Adapter{}
 	var errs []error
-
 
 	for _, opt := range opts {
 		if err := opt.Start(a); err != nil {
