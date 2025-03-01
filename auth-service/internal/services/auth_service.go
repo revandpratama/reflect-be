@@ -16,7 +16,7 @@ type authService struct {
 }
 
 type AuthService interface {
-	Login(ctx context.Context, email, password string) error
+	Login(ctx context.Context, email, password string) (string, error)
 	Register(ctx context.Context, req dto.RegisterRequest) error
 }
 
@@ -26,18 +26,22 @@ func NewAuthService(repository repositories.AuthRepository) AuthService {
 	}
 }
 
-func (s *authService) Login(ctx context.Context, email, password string) error {
+func (s *authService) Login(ctx context.Context, email, password string) (string, error) {
 
 	user, err := s.repository.GetUserByEmail(ctx, email)
 	if err != nil {
-		return fmt.Errorf("login failed: %v", err)
+		return "", fmt.Errorf("login failed: %v", err)
 	}
 
 	if err := helper.ValidatePassword(user.Password, password); err != nil {
-		return fmt.Errorf("login failed: %v", err)
+		return "", fmt.Errorf("login failed: %v", err)
 	}
 
-	return nil
+	token, err := helper.CreateToken(user)
+	if err != nil {
+		return "", fmt.Errorf("login failed: %v", err)
+	}
+	return token, nil
 }
 
 func (s *authService) Register(ctx context.Context, req dto.RegisterRequest) error {
@@ -52,7 +56,7 @@ func (s *authService) Register(ctx context.Context, req dto.RegisterRequest) err
 	}
 
 	user := entities.User{
-		RoleID:   1,
+		RoleID:   req.RoleID,
 		Name:     req.Name,
 		Email:    req.Email,
 		Password: encryptedPasswd,
