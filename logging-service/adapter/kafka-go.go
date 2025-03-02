@@ -14,8 +14,8 @@ func NewKafka() *KafkaGo {
 
 func (k *KafkaGo) InitKafka() {
 	KafkaReader = kafka.NewReader(kafka.ReaderConfig{
-		Brokers:   []string{"localhost:9092"},
-		GroupID:   "consumer-group-id",
+		Brokers:     []string{"localhost:9092"},
+		GroupID:     "logging-service",
 		GroupTopics: []string{"auth-service", "main"},
 	})
 }
