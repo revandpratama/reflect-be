@@ -1,6 +1,7 @@
 package adapter
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/revandpratama/reflect/auth-service/config"
@@ -14,7 +15,7 @@ type KafkaGoOption struct {
 
 func (k *KafkaGoOption) Start(a *Adapter) error {
 	w := &kafka.Writer{
-		Addr:         kafka.TCP(config.ENV.KafkaPort),
+		Addr:         kafka.TCP(fmt.Sprintf("%v:%v", config.ENV.KafkaHost, config.ENV.KafkaPort)),
 		Topic:        config.ENV.KafkaTopic,
 		Balancer:     &kafka.LeastBytes{},
 		BatchTimeout: 1 * time.Second,
