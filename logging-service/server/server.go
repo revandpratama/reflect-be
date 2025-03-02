@@ -106,7 +106,7 @@ func (s *Server) ReadMessageFromKafka() {
 		if err != nil {
 			break
 		}
-		str := fmt.Sprintf("%s-%s-%v\n", m.Topic, string(m.Value), m.Time)
+		str := fmt.Sprintf("%s-%s-%v", m.Topic, string(m.Value), m.Time)
 		s.writeToDocs(str)
 		fmt.Printf("Message on %s: %s\n", m.Topic, string(m.Value))
 	}
