@@ -6,6 +6,7 @@ require (
 	aidanwoods.dev/go-paseto v1.5.4
 	github.com/joho/godotenv v1.5.1
 	github.com/rs/zerolog v1.33.0
+	github.com/segmentio/kafka-go v0.4.47
 	golang.org/x/crypto v0.35.0
 	google.golang.org/grpc v1.70.0
 	google.golang.org/protobuf v1.36.5
@@ -25,7 +26,6 @@ require (
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/pierrec/lz4/v4 v4.1.15 // indirect
-	github.com/segmentio/kafka-go v0.4.47 // indirect
 	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/sync v0.11.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
