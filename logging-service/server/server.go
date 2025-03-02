@@ -3,6 +3,7 @@ package server
 import (
 	"bufio"
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -95,19 +96,36 @@ func (s *Server) writeToDocs(msg string) error {
 	return nil
 }
 
+type LogEntry struct {
+	Service   string    `json:"service"`
+	Message   string    `json:"message"`
+	Timestamp time.Time `json:"timestamp"`
+}
+
 func (s *Server) ReadMessageFromKafka() {
 	// fmt.Println("2.1")
 	reader := adapter.KafkaReader
 	defer reader.Close()
 
+	fmt.Println("waiting for message")
 	for {
-		fmt.Println("tryna read")
 		m, err := reader.ReadMessage(context.Background())
 		if err != nil {
 			break
 		}
-		str := fmt.Sprintf("%s-%s-%v", m.Topic, string(m.Value), m.Time)
-		s.writeToDocs(str)
+		// str := fmt.Sprintf("%s-%s-%v", m.Topic, string(m.Value), m.Time)
+		logEntry := &LogEntry{
+			Service:   "auth-service",
+			Message:   "server running",
+			Timestamp: time.Now(),
+		}
+
+		jsonMsg, err := json.Marshal(logEntry)
+		if err != nil {
+			fmt.Println("Error marshalling JSON:", err)
+			return
+		}
+		s.writeToDocs(string(jsonMsg))
 		fmt.Printf("Message on %s: %s\n", m.Topic, string(m.Value))
 	}
 
