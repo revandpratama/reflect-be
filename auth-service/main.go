@@ -6,7 +6,10 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/rs/zerolog/log"
+	"github.com/joho/godotenv"
+	"github.com/revandpratama/reflect/auth-service/adapter"
+	"github.com/revandpratama/reflect/auth-service/config"
+	"github.com/revandpratama/reflect/auth-service/helper"
 )
 
 type Server struct {
@@ -23,24 +26,52 @@ func NewServer() *Server {
 
 func main() {
 	server := NewServer()
-
 	server.start()
+}
 
-	select {
-	case sig := <-server.shutdown:
-		log.Info().Msg(fmt.Sprintf("Server shutting down, cause: %v", sig))
-	case err := <-server.errorOccured:
-		log.Error().Msg(fmt.Sprintf("Error starting server, cause: %v", err))
+func (server *Server) start() {
+	signal.Notify(server.shutdown, os.Interrupt, syscall.SIGTERM)
+	err := godotenv.Load()
+	if err != nil {
+		server.errorOccured <- err
 	}
 
-	server.cleanup()
-}
+	// * load global config
+	config.LoadConfig()
 
-func (s *Server) start() {
-	signal.Notify(s.shutdown, os.Interrupt, syscall.SIGTERM)
+	// * initialize adapters
+	kafkaOption := &adapter.KafkaGoOption{}
+	postgresOption := &adapter.PostgresOption{}
+	grpcOption := &adapter.GRPCOption{}
+	a, err := adapter.NewAdapter(
+		kafkaOption,
+		postgresOption,
+		grpcOption,
+	)
+	if err != nil {
+		server.errorOccured <- err
+	}
 
-}
+	adapter.Adapters = a
 
-func (s *Server) cleanup() {
+	helper.NewLog().Info("server running").ToKafka()
+	select {
+	case sig := <-server.shutdown:
+		helper.NewLog().Info(fmt.Sprintf("Server shutting down, cause: %v", sig)).ToKafka()
+	case err := <-server.errorOccured:
+		helper.NewLog().Fatal(fmt.Sprintf("Error starting server, cause: %v", err)).ToKafka()
+	}
+
+	helper.NewLog().Info("shutting down server...")
+	helper.NewLog().Info("cleaning up resources...")
+
+	a.Close(
+		postgresOption,
+		grpcOption,
+		kafkaOption,
+	)
+
+	helper.NewLog().Info("resources cleaned up")
+	helper.NewLog().Info("server stopped").ToKafka()
 
 }
