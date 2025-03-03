@@ -19,6 +19,7 @@ type authHandler struct {
 
 type AuthHandler interface {
 	Login(c *fiber.Ctx) error
+	Register(c *fiber.Ctx) error
 }
 
 func NewAuthHandler(conn *grpc.ClientConn) AuthHandler {
