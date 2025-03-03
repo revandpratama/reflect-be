@@ -8,6 +8,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/revandpratama/reflect/adapter"
+	"github.com/revandpratama/reflect/cmd"
 	"github.com/revandpratama/reflect/config"
 	"github.com/revandpratama/reflect/helper"
 )
@@ -43,7 +44,7 @@ func (server *Server) start() {
 	kafkaOption := &adapter.KafkaGoOption{}
 	postgresOption := &adapter.PostgresOption{}
 	restOption := &adapter.RestOption{}
-	grpcOption:= &adapter.GRPCOption{}
+	grpcOption := &adapter.GRPCOption{}
 	a, err := adapter.NewAdapter(
 		kafkaOption,
 		postgresOption,
@@ -54,6 +55,13 @@ func (server *Server) start() {
 		server.errorOccured <- err
 	}
 
+	if config.ENV.AppEnvironment == "development" {
+		helper.NewLog().Info("server running in development mode").ToKafka()
+
+		cmd.AutoMigrate(a.Postgres)
+	} else {
+		helper.NewLog().Info(fmt.Sprintf("server running in %v mode", config.ENV.AppEnvironment)).ToKafka()
+	}
 
 	// ? block server until shutdown signals
 	select {
