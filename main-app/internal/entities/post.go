@@ -3,6 +3,7 @@ package entities
 import (
 	"time"
 
+	"github.com/revandpratama/reflect/internal/dto"
 	"gorm.io/gorm"
 )
 
@@ -19,4 +20,15 @@ type Post struct {
 
 func (Post) TableName() string {
 	return "public.posts"
+}
+
+func (p *Post) ToResponse() dto.PostResponse {
+	return dto.PostResponse{
+		ID:        p.ID,
+		UserID:    p.UserID,
+		Title:     p.Title,
+		Body:      p.Body,
+		ImageUrl:  p.ImageUrl,
+		CreatedAt: p.CreatedAt,
+	}
 }

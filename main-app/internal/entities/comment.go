@@ -3,6 +3,7 @@ package entities
 import (
 	"time"
 
+	"github.com/revandpratama/reflect/internal/dto"
 	"gorm.io/gorm"
 )
 
@@ -17,4 +18,14 @@ type Comment struct {
 
 func (Comment) TableName() string {
 	return "public.comments"
+}
+
+func (c *Comment) ToResponse() dto.CommentResponse {
+	return dto.CommentResponse{
+		ID:        c.ID,
+		PostID:    c.PostID,
+		Body:      c.Body,
+		CreatedAt: c.CreatedAt,
+		UpdatedAt: c.UpdatedAt,
+	}
 }
