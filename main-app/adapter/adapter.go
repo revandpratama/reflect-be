@@ -11,7 +11,7 @@ import (
 type Adapter struct {
 	// * adapter list
 	Postgres   *gorm.DB
-	GrcpServer *grpc.Server
+	GrcpClient *grpc.ClientConn
 	KafkaGo    *kafka.Writer
 }
 
