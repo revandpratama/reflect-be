@@ -82,5 +82,4 @@ func (server *Server) start() {
 	)
 
 	helper.NewLog().Info("resources cleaned up")
-	helper.NewLog().Info("server stopped").ToKafka()
 }
