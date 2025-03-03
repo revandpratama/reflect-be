@@ -2,40 +2,27 @@ package adapter
 
 import (
 	"fmt"
-	"net"
-	"os"
 
-	"github.com/revandpratama/reflect/config"
 	"github.com/revandpratama/reflect/helper"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type GRPCOption struct {
-	GrcpServer *grpc.Server
+	GrcpClient *grpc.ClientConn
 }
 
 func (g *GRPCOption) Start(a *Adapter) error {
 
 	helper.NewLog().Info("initializing grpc server...").ToKafka()
 
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%v", config.ENV.GRPCServerPort)) // Adjust port as needed
+	conn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		return fmt.Errorf("failed to listen: %w", err)
+		return fmt.Errorf("failed to connect to server: %v", err)
 	}
 
-	g.GrcpServer = grpc.NewServer()
-
-	go func() {
-
-		if err := g.GrcpServer.Serve(listener); err != nil {
-			// Handle server failure
-			helper.NewLog().Fatal(fmt.Sprintf("Failed to start gRPC server: %v", err)).ToKafka()
-			os.Exit(1)
-		}
-
-	}()
-
-	a.GrcpServer = g.GrcpServer
+	g.GrcpClient = conn
+	a.GrcpClient = conn
 
 	helper.NewLog().Info("grpc server started").ToKafka()
 
@@ -44,7 +31,7 @@ func (g *GRPCOption) Start(a *Adapter) error {
 
 func (g *GRPCOption) Stop() error {
 
-	g.GrcpServer.GracefulStop()
+	g.GrcpClient.Close()
 
 	return nil
 }
