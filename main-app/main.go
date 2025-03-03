@@ -48,8 +48,8 @@ func (server *Server) start() {
 	a, err := adapter.NewAdapter(
 		kafkaOption,
 		postgresOption,
-		restOption,
 		grpcOption,
+		restOption,
 	)
 	if err != nil {
 		server.errorOccured <- err
@@ -75,9 +75,9 @@ func (server *Server) start() {
 	helper.NewLog().Info("cleaning up resources...")
 
 	a.Close(
-		postgresOption,
 		restOption,
 		grpcOption,
+		postgresOption,
 		kafkaOption,
 	)
 
