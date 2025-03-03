@@ -15,11 +15,11 @@ func InitPostHandler(db *gorm.DB) handlers.PostHandler {
 }
 
 func InitPostRoutes(r fiber.Router, handler handlers.PostHandler) {
-	// r.Get("/posts", handler.GetAllPosts)
-	// r.Get("/posts/:id", handler.GetPostByID)
-	// r.Post("/posts", handler.CreatePost)
-	// r.Put("/posts/:id", handler.UpdatePost)
-	// r.Delete("/posts/:id", handler.DeletePost)
+	r.Get("/posts", handler.GetAllPosts)
+	r.Get("/posts/:id", handler.GetPostByID)
+	r.Post("/posts", handler.CreatePost)
+	r.Put("/posts/:id", handler.UpdatePost)
+	r.Delete("/posts/:id", handler.DeletePost)
 }
 
 

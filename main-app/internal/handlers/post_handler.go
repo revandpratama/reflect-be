@@ -18,6 +18,12 @@ type postHandler struct {
 }
 
 type PostHandler interface {
+	GetAllPosts(c *fiber.Ctx) error
+	GetPostByID(c *fiber.Ctx) error
+	GetPostByUserID(c *fiber.Ctx) error
+	CreatePost(c *fiber.Ctx) error
+	UpdatePost(c *fiber.Ctx) error
+	DeletePost(c *fiber.Ctx) error
 }
 
 func NewPostHandler(service services.PostService) PostHandler {
