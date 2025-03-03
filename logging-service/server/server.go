@@ -115,8 +115,8 @@ func (s *Server) ReadMessageFromKafka() {
 		}
 		// str := fmt.Sprintf("%s-%s-%v", m.Topic, string(m.Value), m.Time)
 		logEntry := &LogEntry{
-			Service:   "auth-service",
-			Message:   "server running",
+			Service:   string(m.Key),
+			Message:   string(m.Value),
 			Timestamp: time.Now(),
 		}
 
