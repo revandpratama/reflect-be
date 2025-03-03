@@ -16,6 +16,8 @@ type RestOption struct {
 }
 
 func (r *RestOption) Start(a *Adapter) error {
+	helper.NewLog().Info("initializing REST server...").ToKafka()
+
 	r.app = fiber.New()
 
 	r.app.Get("/ping", func(c *fiber.Ctx) error {
@@ -28,6 +30,8 @@ func (r *RestOption) Start(a *Adapter) error {
 			os.Exit(1)
 		}
 	}()
+
+	helper.NewLog().Info("REST server started").ToKafka()
 
 	return nil
 }
