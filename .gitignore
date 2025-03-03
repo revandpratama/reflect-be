@@ -1,5 +1,7 @@
 proto.txt
 
+main-app/.env
+
 auth-service/.env
 auth-service/client-test
 
