@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/revandpratama/reflect/config"
 	"github.com/rs/zerolog/log"
 	"github.com/segmentio/kafka-go"
 )
@@ -19,7 +20,7 @@ type Log struct {
 func NewLog() *Log {
 	return &Log{
 		Timestamp: time.Now(),
-		Source:    "auth-service",
+		Source:    config.ENV.KafkaTopic,
 	}
 }
 
