@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/revandpratama/reflect/config"
 	"github.com/revandpratama/reflect/helper"
+	"github.com/revandpratama/reflect/internal/routes"
 )
 
 type RestOption struct {
@@ -23,6 +24,14 @@ func (r *RestOption) Start(a *Adapter) error {
 	r.app.Get("/ping", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"message": "pong"})
 	})
+
+	api := r.app.Group("/api")
+
+	postHandler := routes.InitPostHandler(a.Postgres)
+	routes.InitPostRoutes(api, postHandler)
+
+	authHandler := routes.InitAuthHandler(a.GrcpClient)
+	routes.InitAuthRoutes(api, authHandler)
 
 	go func() {
 		if err := r.app.Listen(fmt.Sprintf(":%v", config.ENV.RESTServerPort)); err != nil {
