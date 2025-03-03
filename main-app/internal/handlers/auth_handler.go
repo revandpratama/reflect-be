@@ -43,7 +43,7 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 	response := response.NewResponse(&types.ResponseParams{
 		StatusCode: fiber.StatusOK,
 		Message:    "login success",
-		Data:       map[string]string{"token": res.AccessToken},
+		Data:       dto.LoginResponse{Token: res.AccessToken},
 	})
 	c.JSON(response)
 
