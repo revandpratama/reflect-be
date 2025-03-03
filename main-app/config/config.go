@@ -5,6 +5,8 @@ import (
 )
 
 type Config struct {
+	AppEnvironment string
+
 	DBHost     string
 	DBPort     string
 	DBUser     string
@@ -27,6 +29,8 @@ var ENV *Config
 
 func LoadConfig() {
 	ENV = &Config{
+		AppEnvironment: os.Getenv("AppEnvironment"),
+
 		DBHost:     os.Getenv("DBHost"),
 		DBPort:     os.Getenv("DBPort"),
 		DBUser:     os.Getenv("DBUser"),
