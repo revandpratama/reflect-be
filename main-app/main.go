@@ -6,6 +6,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/joho/godotenv"
+	"github.com/revandpratama/reflect/config"
 	"github.com/revandpratama/reflect/helper"
 )
 
@@ -28,6 +30,14 @@ func main() {
 
 func (server *Server) start() {
 	signal.Notify(server.shutdown, os.Interrupt, syscall.SIGTERM)
+
+	err := godotenv.Load()
+	if err != nil {
+		server.errorOccured <- err
+	}
+
+	// * load global config
+	config.LoadConfig()
 
 	select {
 	case sig := <-server.shutdown:
