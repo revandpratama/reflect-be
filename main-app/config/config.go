@@ -15,6 +15,7 @@ type Config struct {
 	SecretKey string
 
 	GRPCServerPort string
+	RESTServerPort string
 
 	KafkaHost     string
 	KafkaPort     string
@@ -36,6 +37,7 @@ func LoadConfig() {
 		SecretKey: os.Getenv("SecretKey"),
 
 		GRPCServerPort: os.Getenv("GRPCServerPort"),
+		RESTServerPort: os.Getenv("RESTServerPort"),
 
 		KafkaHost:     os.Getenv("KafkaHost"),
 		KafkaPort:     os.Getenv("KafkaPort"),
