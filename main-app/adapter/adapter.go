@@ -3,6 +3,7 @@ package adapter
 import (
 	"fmt"
 
+	"github.com/minio/minio-go/v7"
 	"github.com/segmentio/kafka-go"
 	"google.golang.org/grpc"
 	"gorm.io/gorm"
@@ -10,9 +11,10 @@ import (
 
 type Adapter struct {
 	// * adapter list
-	Postgres   *gorm.DB
-	GrcpClient *grpc.ClientConn
-	KafkaGo    *kafka.Writer
+	Postgres    *gorm.DB
+	GrcpClient  *grpc.ClientConn
+	KafkaGo     *kafka.Writer
+	MinioClient *minio.Client
 }
 
 type Option interface {
