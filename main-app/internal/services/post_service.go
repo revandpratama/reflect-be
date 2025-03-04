@@ -3,6 +3,8 @@ package services
 import (
 	"context"
 
+	"github.com/minio/minio-go/v7"
+	"github.com/revandpratama/reflect/helper"
 	"github.com/revandpratama/reflect/internal/dto"
 	"github.com/revandpratama/reflect/internal/entities"
 	"github.com/revandpratama/reflect/internal/repositories"
@@ -12,6 +14,7 @@ import (
 
 type postService struct {
 	repo repositories.PostRepository
+	minioClient *minio.Client
 }
 
 type PostService interface {
@@ -23,9 +26,10 @@ type PostService interface {
 	DeletePost(ctx context.Context, id int) error
 }
 
-func NewPostService(repo repositories.PostRepository) PostService {
+func NewPostService(repo repositories.PostRepository, minioCLient *minio.Client) PostService {
 	return &postService{
 		repo: repo,
+		minioClient: minioCLient,
 	}
 }
 
@@ -36,7 +40,14 @@ func (p *postService) CreatePost(ctx context.Context, req *dto.PostRequest) erro
 		UserID:   req.UserID,
 		Title:    req.Title,
 		Body:     req.Body,
-		ImageUrl: nil,
+	}
+
+	if req.Image != nil {
+		imgUrl, err := helper.UploadObject(ctx, p.minioClient, "posts", req.Image)
+		if err != nil {
+			return &types.InternalServerError{Message: err.Error()}
+		}
+		post.ImageUrl = &imgUrl
 	}
 
 	err := p.repo.CreatePost(ctx, &post)
