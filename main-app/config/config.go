@@ -19,6 +19,11 @@ type Config struct {
 	GRPCServerPort string
 	RESTServerPort string
 
+	Minio_Endpoint  string
+	Minio_AccessKey string
+	Minio_SecretKey string
+	Minio_UseSSL    string
+
 	KafkaHost     string
 	KafkaPort     string
 	KafkaClientID string
@@ -42,6 +47,11 @@ func LoadConfig() {
 
 		GRPCServerPort: os.Getenv("GRPCServerPort"),
 		RESTServerPort: os.Getenv("RESTServerPort"),
+
+		Minio_Endpoint:  os.Getenv("Minio_Endpoint"),
+		Minio_AccessKey: os.Getenv("Minio_AccessKey"),
+		Minio_SecretKey: os.Getenv("Minio_SecretKey"),
+		Minio_UseSSL:    os.Getenv("Minio_UseSSL"),
 
 		KafkaHost:     os.Getenv("KafkaHost"),
 		KafkaPort:     os.Getenv("KafkaPort"),
