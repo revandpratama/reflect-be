@@ -27,7 +27,7 @@ func (r *RestOption) Start(a *Adapter) error {
 
 	api := r.app.Group("/api")
 
-	postHandler := routes.InitPostHandler(a.Postgres)
+	postHandler := routes.InitPostHandler(a.Postgres, a.MinioClient)
 	routes.InitPostRoutes(api, postHandler)
 
 	authHandler := routes.InitAuthHandler(a.GrcpClient)
