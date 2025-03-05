@@ -1,5 +1,7 @@
 proto.txt
 
+deployments/.env
+
 main-app/.env
 
 auth-service/.env
