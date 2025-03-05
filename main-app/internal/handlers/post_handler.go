@@ -106,6 +106,13 @@ func (h *postHandler) CreatePost(c *fiber.Ctx) error {
 		return errorhandler.BuildError(c, &types.BadRequestError{Message: err.Error()})
 	}
 
+	image, err := c.FormFile("image")
+	if err != nil {
+		return errorhandler.BuildError(c, &types.BadRequestError{Message: err.Error()})
+	}
+
+	req.Image = image
+
 	if err := h.service.CreatePost(ctx, &req); err != nil {
 		return errorhandler.BuildError(c, err)
 	}
@@ -122,16 +129,33 @@ func (h *postHandler) UpdatePost(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
+	id, err := c.ParamsInt("id")
+	if err != nil {
+		return errorhandler.BuildError(c, &types.BadRequestError{Message: err.Error()})
+	}
+
 	var req dto.PostRequest
 	if err := c.BodyParser(&req); err != nil {
 		return errorhandler.BuildError(c, &types.BadRequestError{Message: err.Error()})
 	}
 
-	if err := h.service.UpdatePost(ctx, &req); err != nil {
+	image, err := c.FormFile("image")
+	if err != nil {
+		return errorhandler.BuildError(c, &types.BadRequestError{Message: err.Error()})
+	}
+
+	req.Image = image
+
+	if err := h.service.UpdatePost(ctx, id, &req); err != nil {
 		return errorhandler.BuildError(c, err)
 	}
 
-	return nil
+	res := response.NewResponse(&types.ResponseParams{
+		StatusCode: fiber.StatusOK,
+		Message:    "success update post",
+	})
+
+	return c.JSON(res)
 }
 
 func (h *postHandler) DeletePost(c *fiber.Ctx) error {
@@ -146,5 +170,11 @@ func (h *postHandler) DeletePost(c *fiber.Ctx) error {
 	if err := h.service.DeletePost(ctx, id); err != nil {
 		return errorhandler.BuildError(c, err)
 	}
-	return nil
+
+	res := response.NewResponse(&types.ResponseParams{
+		StatusCode: fiber.StatusOK,
+		Message:    "success delete post",
+	})
+
+	return c.Status(fiber.StatusOK).JSON(res)
 }
