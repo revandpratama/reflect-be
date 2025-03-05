@@ -16,7 +16,7 @@ type PostRepository interface {
 	GetPostByID(ctx context.Context, id int) (*entities.Post, error)
 	GetAllPosts(ctx context.Context) ([]entities.Post, error)
 	GetPostByUserID(ctx context.Context, userID int) ([]entities.Post, error)
-	UpdatePost(ctx context.Context, post *entities.Post) error
+	UpdatePost(ctx context.Context,id int, post *entities.Post) error
 	DeletePost(ctx context.Context, id int) error
 }
 
@@ -56,10 +56,8 @@ func (p *postRepository) GetPostByUserID(ctx context.Context, userID int) ([]ent
 	return posts, err
 }
 
-// TODO: Update post still need to be fixed
-func (p *postRepository) UpdatePost(ctx context.Context, post *entities.Post) error {
-	// ? use map to update values
-	err := p.db.WithContext(ctx).Where("id = ?", post.ID).Updates(&post).Error
+func (p *postRepository) UpdatePost(ctx context.Context,id int, post *entities.Post) error {
+	err := p.db.WithContext(ctx).Where("id = ?", id).Updates(&post).Error
 
 	return err
 }
