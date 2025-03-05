@@ -13,6 +13,11 @@ import (
 	"github.com/revandpratama/reflect/config"
 )
 
+const (
+	MINIO_POST_BUCKET = "post"
+	MINIO_PROFILE_BUCKET = "profile"
+)
+
 func ToRelativePath(path string) string {
 	minio_endpoint := fmt.Sprintf("http://%s", config.ENV.Minio_Endpoint)
 
