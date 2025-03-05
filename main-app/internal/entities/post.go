@@ -3,6 +3,7 @@ package entities
 import (
 	"time"
 
+	"github.com/revandpratama/reflect/helper"
 	"github.com/revandpratama/reflect/internal/dto"
 	"gorm.io/gorm"
 )
@@ -23,12 +24,15 @@ func (Post) TableName() string {
 }
 
 func (p *Post) ToResponse() dto.PostResponse {
+
+	relativePathImageUrl := helper.ToRelativePath(*p.ImageUrl)
+
 	return dto.PostResponse{
 		ID:        p.ID,
 		UserID:    p.UserID,
 		Title:     p.Title,
 		Body:      p.Body,
-		ImageUrl:  p.ImageUrl,
+		ImageUrl:  &relativePathImageUrl,
 		CreatedAt: p.CreatedAt,
 	}
 }
