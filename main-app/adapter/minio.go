@@ -16,7 +16,7 @@ type MinioOption struct {
 
 func (m *MinioOption) Start(a *Adapter) error {
 
-	client, err := minio.New("", &minio.Options{
+	client, err := minio.New(config.ENV.Minio_Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(config.ENV.Minio_AccessKey, config.ENV.Minio_SecretKey, ""),
 		Secure: config.ENV.Minio_UseSSL == "true",
 	})
