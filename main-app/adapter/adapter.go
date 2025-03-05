@@ -22,7 +22,7 @@ type Option interface {
 	Stop() error
 }
 
-var Adapters *Adapter
+// var Adapters *Adapter
 
 func NewAdapter(opts ...Option) (*Adapter, error) {
 	a := &Adapter{}
@@ -35,7 +35,7 @@ func NewAdapter(opts ...Option) (*Adapter, error) {
 	}
 
 	if len(errs) > 0 {
-		return nil, fmt.Errorf("failed to start adapter: %v", errs)
+		return a, fmt.Errorf("failed to start adapter: %v", errs)
 	}
 
 	return a, nil
