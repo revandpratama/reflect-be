@@ -42,10 +42,10 @@ func (server *Server) start() {
 	config.LoadConfig()
 
 	kafkaOption := &adapter.KafkaGoOption{}
+	minioOption := &adapter.MinioOption{}
 	postgresOption := &adapter.PostgresOption{}
 	restOption := &adapter.RestOption{}
 	grpcOption := &adapter.GRPCOption{}
-	minioOption := &adapter.MinioOption{}
 	a, err := adapter.NewAdapter(
 		kafkaOption,
 		minioOption,
