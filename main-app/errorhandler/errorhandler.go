@@ -27,5 +27,5 @@ func BuildError(c *fiber.Ctx, err error) error {
 		Message:    err.Error(),
 	})
 
-	return c.JSON(response)
+	return c.Status(statusCode).JSON(response)
 }
