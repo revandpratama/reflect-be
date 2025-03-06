@@ -20,9 +20,9 @@ func InitPostRoutes(r fiber.Router, handler handlers.PostHandler) {
 	post := r.Group("/posts")
 	post.Use(middleware.AuthMiddleware())
 
-	r.Get("/posts", handler.GetAllPosts)
-	r.Get("/posts/:id", handler.GetPostByID)
-	r.Post("/posts", handler.CreatePost)
-	r.Put("/posts/:id", handler.UpdatePost)
-	r.Delete("/posts/:id", handler.DeletePost)
+	post.Get("/", handler.GetAllPosts)
+	post.Get("/:id", handler.GetPostByID)
+	post.Post("/", handler.CreatePost)
+	post.Put("/:id", handler.UpdatePost)
+	post.Delete("/:id", handler.DeletePost)
 }
