@@ -1,6 +1,6 @@
 # Reflect API
 
-A microservices-based backend application with authentication, logging, and REST API capabilities.
+Reflect API is a microservices-based backend architecture designed for scalable applications requiring robust authentication, efficient logging, and flexible REST APIs. Built with a focus on separation of concerns, it features dedicated services for authentication, business logic, and logging—all communicating via Kafka messaging. With MinIO integration for object storage and PASETO tokens for secure authentication, Reflect API provides a modern, maintainable foundation for building resilient API.
 
 ## 📋 Table of Contents
 
