@@ -7,6 +7,11 @@ type ResponseWithData struct {
 	Message string `json:"message"`
 	Data    any    `json:"data"`
 }
+type ResponseWithError struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+	Errors  any    `json:"errors"`
+}
 
 type ResponseWithoutData struct {
 	Status  string `json:"status"`
@@ -33,6 +38,14 @@ func NewResponse(response *types.ResponseParams) any {
 		res = &ResponseWithoutData{
 			Status:  status,
 			Message: response.Message,
+		}
+	}
+
+	if response.Errors != nil {
+		res = &ResponseWithError{
+			Status:  status,
+			Message: response.Message,
+			Errors:  response.Errors,
 		}
 	}
 
