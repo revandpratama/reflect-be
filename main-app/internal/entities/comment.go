@@ -9,6 +9,7 @@ import (
 
 type Comment struct {
 	ID        int            `gorm:"primaryKey;datatype:serial"`
+	UserID    int            `gorm:"column:user_id"`
 	PostID    int            `gorm:"column:post_id"`
 	Body      string         `gorm:"column:body"`
 	CreatedAt time.Time      `gorm:"column:created_at"`
@@ -24,6 +25,7 @@ func (c *Comment) ToResponse() dto.CommentResponse {
 	return dto.CommentResponse{
 		ID:        c.ID,
 		PostID:    c.PostID,
+		UserID:    c.UserID,
 		Body:      c.Body,
 		CreatedAt: c.CreatedAt,
 		UpdatedAt: c.UpdatedAt,
