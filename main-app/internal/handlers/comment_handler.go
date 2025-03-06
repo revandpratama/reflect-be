@@ -50,7 +50,7 @@ func (h *commentHandler) CreateComment(c *fiber.Ctx) error {
 			Errors:     errs,
 		})
 
-		return c.JSON(res)
+		return c.Status(fiber.StatusBadRequest).JSON(res)
 	}
 
 	if err := h.service.CreateComment(ctx, &req); err != nil {
@@ -133,7 +133,7 @@ func (h *commentHandler) UpdateComment(c *fiber.Ctx) error {
 			Errors:     errs,
 		})
 
-		return c.JSON(res)
+		return c.Status(fiber.StatusBadRequest).JSON(res)
 	}
 
 	if err := h.service.UpdateComment(ctx, id, &req); err != nil {

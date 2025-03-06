@@ -49,7 +49,7 @@ func (h *postHandler) GetAllPosts(c *fiber.Ctx) error {
 		Data:       posts,
 	})
 
-	return c.JSON(res)
+	return c.Status(fiber.StatusOK).JSON(res)
 }
 
 func (h *postHandler) GetPostByID(c *fiber.Ctx) error {
@@ -72,7 +72,7 @@ func (h *postHandler) GetPostByID(c *fiber.Ctx) error {
 		Data:       post,
 	})
 
-	return c.JSON(res)
+	return c.Status(fiber.StatusOK).JSON(res)
 }
 
 func (h *postHandler) GetPostByUserID(c *fiber.Ctx) error {
@@ -95,7 +95,7 @@ func (h *postHandler) GetPostByUserID(c *fiber.Ctx) error {
 		Data:       posts,
 	})
 
-	return c.JSON(res)
+	return c.Status(fiber.StatusOK).JSON(res)
 }
 
 func (h *postHandler) CreatePost(c *fiber.Ctx) error {
@@ -115,7 +115,7 @@ func (h *postHandler) CreatePost(c *fiber.Ctx) error {
 			Errors:     errs,
 		})
 
-		return c.JSON(res)
+		return c.Status(fiber.StatusBadRequest).JSON(res)
 	}
 
 	image, err := c.FormFile("image")
@@ -134,7 +134,7 @@ func (h *postHandler) CreatePost(c *fiber.Ctx) error {
 		Message:    "success create post",
 	})
 
-	return c.JSON(res)
+	return c.Status(fiber.StatusOK).JSON(res)
 }
 
 func (h *postHandler) UpdatePost(c *fiber.Ctx) error {
@@ -159,7 +159,7 @@ func (h *postHandler) UpdatePost(c *fiber.Ctx) error {
 			Errors:     errs,
 		})
 
-		return c.JSON(res)
+		return c.Status(fiber.StatusBadRequest).JSON(res)
 	}
 
 	image, err := c.FormFile("image")
@@ -178,7 +178,7 @@ func (h *postHandler) UpdatePost(c *fiber.Ctx) error {
 		Message:    "success update post",
 	})
 
-	return c.JSON(res)
+	return c.Status(fiber.StatusOK).JSON(res)
 }
 
 func (h *postHandler) DeletePost(c *fiber.Ctx) error {
