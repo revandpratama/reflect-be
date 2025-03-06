@@ -54,7 +54,7 @@ func (server *Server) start() {
 		restOption,
 	)
 	if err != nil {
-		server.errorOccured <- err
+		helper.NewLog().Error(fmt.Sprintf("error initializing adapter: %v", err)).ToKafka()
 	}
 
 	if config.ENV.AppEnvironment == "development" {
