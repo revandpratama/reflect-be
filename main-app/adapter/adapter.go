@@ -35,7 +35,7 @@ func NewAdapter(opts ...Option) (*Adapter, error) {
 	}
 
 	if len(errs) > 0 {
-		return nil, fmt.Errorf("failed to start adapter: %v", errs)
+		return a, fmt.Errorf("failed to start adapter: %v", errs)
 	}
 
 	return a, nil
