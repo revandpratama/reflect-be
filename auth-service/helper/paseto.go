@@ -46,7 +46,7 @@ func CreateToken(user entities.User) (string, error) {
 	if encrypted == "" {
 		return "", errors.New("failed creating token")
 	}
-
+	encrypted = "Bearer " + encrypted
 	return encrypted, err
 
 }
