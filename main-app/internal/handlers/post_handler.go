@@ -6,6 +6,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/revandpratama/reflect/errorhandler"
+	"github.com/revandpratama/reflect/helper"
 	"github.com/revandpratama/reflect/helper/response"
 	"github.com/revandpratama/reflect/internal/dto"
 	"github.com/revandpratama/reflect/internal/services"
@@ -106,6 +107,17 @@ func (h *postHandler) CreatePost(c *fiber.Ctx) error {
 		return errorhandler.BuildError(c, &types.BadRequestError{Message: err.Error()})
 	}
 
+	errs := helper.ValidateStruct(&req)
+	if len(errs) > 0 {
+		res := response.NewResponse(&types.ResponseParams{
+			StatusCode: fiber.StatusBadRequest,
+			Message:    "validation error",
+			Errors:     errs,
+		})
+
+		return c.JSON(res)
+	}
+
 	image, err := c.FormFile("image")
 	if err != nil {
 		return errorhandler.BuildError(c, &types.BadRequestError{Message: err.Error()})
@@ -137,6 +149,17 @@ func (h *postHandler) UpdatePost(c *fiber.Ctx) error {
 	var req dto.PostRequest
 	if err := c.BodyParser(&req); err != nil {
 		return errorhandler.BuildError(c, &types.BadRequestError{Message: err.Error()})
+	}
+
+	errs := helper.ValidateStruct(&req)
+	if len(errs) > 0 {
+		res := response.NewResponse(&types.ResponseParams{
+			StatusCode: fiber.StatusBadRequest,
+			Message:    "validation error",
+			Errors:     errs,
+		})
+
+		return c.JSON(res)
 	}
 
 	image, err := c.FormFile("image")
