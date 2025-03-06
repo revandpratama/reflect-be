@@ -27,11 +27,14 @@ func (r *RestOption) Start(a *Adapter) error {
 
 	api := r.app.Group("/api")
 
+	authHandler := routes.InitAuthHandler(a.GrcpClient)
+	routes.InitAuthRoutes(api, authHandler)
+
 	postHandler := routes.InitPostHandler(a.Postgres, a.MinioClient)
 	routes.InitPostRoutes(api, postHandler)
 
-	authHandler := routes.InitAuthHandler(a.GrcpClient)
-	routes.InitAuthRoutes(api, authHandler)
+	commentHandler := routes.InitCommentHandler(a.Postgres)
+	routes.InitCommentRoutes(api, commentHandler)
 
 	go func() {
 		if err := r.app.Listen(fmt.Sprintf(":%v", config.ENV.RESTServerPort)); err != nil {
