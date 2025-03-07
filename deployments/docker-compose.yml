@@ -42,6 +42,23 @@ services:
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9090"
+  
+  redis:
+    image: redis:7.4.2
+    container_name: redis_container
+    env_file:
+      - .env
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}", "--appendonly", "yes"]
 
 volumes:
   minio_data:
+
+  redis_data:
+    driver: local

@@ -24,6 +24,11 @@ type Config struct {
 	Minio_SecretKey string
 	Minio_UseSSL    string
 
+	RedisHost     string
+	RedisPort     string
+	RedisPassword string
+	RedisDB       string
+
 	KafkaHost     string
 	KafkaPort     string
 	KafkaClientID string
@@ -52,6 +57,11 @@ func LoadConfig() {
 		Minio_AccessKey: os.Getenv("Minio_AccessKey"),
 		Minio_SecretKey: os.Getenv("Minio_SecretKey"),
 		Minio_UseSSL:    os.Getenv("Minio_UseSSL"),
+
+		RedisHost:     os.Getenv("RedisHost"),
+		RedisPort:     os.Getenv("RedisPort"),
+		RedisPassword: os.Getenv("RedisPassword"),
+		RedisDB:       os.Getenv("RedisDB"),
 
 		KafkaHost:     os.Getenv("KafkaHost"),
 		KafkaPort:     os.Getenv("KafkaPort"),

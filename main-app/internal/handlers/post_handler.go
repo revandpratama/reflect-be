@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/redis/go-redis/v9"
 	"github.com/revandpratama/reflect/errorhandler"
 	"github.com/revandpratama/reflect/helper"
 	"github.com/revandpratama/reflect/helper/response"
@@ -16,8 +18,9 @@ import (
 )
 
 type postHandler struct {
-	service services.PostService
-	ctx     context.Context
+	service     services.PostService
+	ctx         context.Context
+	redisClient *redis.Client
 }
 
 type PostHandler interface {
@@ -29,10 +32,11 @@ type PostHandler interface {
 	DeletePost(c *fiber.Ctx) error
 }
 
-func NewPostHandler(service services.PostService) PostHandler {
+func NewPostHandler(service services.PostService, redisClient *redis.Client) PostHandler {
 	return &postHandler{
-		service: service,
-		ctx:     context.Background(),
+		service:     service,
+		ctx:         context.Background(),
+		redisClient: redisClient,
 	}
 }
 
@@ -42,6 +46,20 @@ func (h *postHandler) GetAllPosts(c *fiber.Ctx) error {
 
 	page := c.QueryInt("page", 1)
 	limit := c.QueryInt("limit", 5)
+
+	redisKey := fmt.Sprintf("posts:page:%d:limit-%d", page, limit)
+
+	byteVal, err := helper.GetFromRedis(ctx, h.redisClient, redisKey)
+	if err == nil {
+		var res any
+		if err := json.Unmarshal(byteVal, &res); err != nil {
+			return errorhandler.BuildError(c, &types.InternalServerError{Message: err.Error()})
+		}
+
+		// res := response.NewResponse(&responseParam)
+		helper.NewLog().Info("success retrieve all posts from redis")
+		return c.Status(fiber.StatusOK).JSON(res)
+	}
 
 	posts, pagination, err := h.service.GetAllPosts(ctx, page, limit)
 	if err != nil {
@@ -54,6 +72,10 @@ func (h *postHandler) GetAllPosts(c *fiber.Ctx) error {
 		Data:       posts,
 		Pagination: pagination,
 	})
+
+	if err := helper.SetToRedis(ctx, h.redisClient, redisKey, res); err != nil {
+		helper.NewLog().Error(fmt.Sprintf("error set redis cache: %v", err))
+	}
 
 	return c.Status(fiber.StatusOK).JSON(res)
 }
@@ -121,7 +143,7 @@ func (h *postHandler) CreatePost(c *fiber.Ctx) error {
 		return errorhandler.BuildError(c, &types.BadRequestError{Message: err.Error()})
 	}
 
-	req.UserID = c.Locals("id").(int)
+	req.UserID = c.Locals("user_id").(int)
 
 	errs := helper.ValidateStruct(&req)
 	if len(errs) > 0 {
@@ -142,6 +164,10 @@ func (h *postHandler) CreatePost(c *fiber.Ctx) error {
 		StatusCode: fiber.StatusOK,
 		Message:    "success create post",
 	})
+
+	if err := helper.DeleteRedisCache(ctx, h.redisClient, helper.REDIS_POSTS_PATTERN); err != nil {
+		helper.NewLog().Error(fmt.Sprintf("error delete redis cache: %v", err))
+	}
 
 	return c.Status(fiber.StatusOK).JSON(res)
 }
@@ -190,6 +216,10 @@ func (h *postHandler) UpdatePost(c *fiber.Ctx) error {
 		Message:    "success update post",
 	})
 
+	if err := helper.DeleteRedisCache(ctx, h.redisClient, helper.REDIS_POSTS_PATTERN); err != nil {
+		helper.NewLog().Error(fmt.Sprintf("error delete redis cache: %v", err))
+	}
+
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
@@ -210,6 +240,10 @@ func (h *postHandler) DeletePost(c *fiber.Ctx) error {
 		StatusCode: fiber.StatusOK,
 		Message:    "success delete post",
 	})
+
+	if err := helper.DeleteRedisCache(ctx, h.redisClient, helper.REDIS_POSTS_PATTERN); err != nil {
+		helper.NewLog().Error(fmt.Sprintf("error delete redis cache: %v", err))
+	}
 
 	return c.Status(fiber.StatusOK).JSON(res)
 }
