@@ -73,11 +73,12 @@ A Kafka-based logging system that captures logs from all other services.
 
 ## 🛠️ Technologies
 
-- **Backend**: Go, Fiber
+- **Backend**: Go, Fiber HTTP library
 - **Authentication**: PASETO tokens
 - **Message Broker**: Apache Kafka (segment.io/kafka-go)
 - **Object Storage**: MinIO
-- **Database**: Postgresql, GORM
+- **Caching**: Redis
+- **Database**: Postgresql
 - **API Documentation**: Swagger
 - **Containerization**: Docker
 - **Orchestration**: docker-compose
@@ -89,6 +90,7 @@ A Kafka-based logging system that captures logs from all other services.
 - Docker and Docker Compose
 - Kafka
 - MinIO
+- Redis
 
 ### Installation
 
@@ -109,32 +111,6 @@ A Kafka-based logging system that captures logs from all other services.
    docker-compose up -d
    ```
 
-### Configuration
-
-#### Main App
-```
-# Main App configuration details
-```
-
-#### Auth Service
-```
-# Auth Service configuration details
-```
-
-#### Logging Service
-```
-# Logging Service configuration details
-```
-
-#### Kafka Setup
-```
-# Kafka configuration details
-```
-
-#### MinIO Setup
-```
-# MinIO configuration details
-```
 
 ## 📚 API Documentation
 
@@ -182,12 +158,6 @@ A Kafka-based logging system that captures logs from all other services.
 
 ```bash
 # Docker deployment commands
-```
-
-### Kubernetes Deployment
-
-```bash
-# Kubernetes deployment commands
 ```
 
 ## 🤝 Contributing
