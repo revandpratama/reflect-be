@@ -30,7 +30,7 @@ func (r *RestOption) Start(a *Adapter) error {
 	authHandler := routes.InitAuthHandler(a.GrcpClient)
 	routes.InitAuthRoutes(api, authHandler)
 
-	postHandler := routes.InitPostHandler(a.Postgres, a.MinioClient)
+	postHandler := routes.InitPostHandler(a.Postgres, a.MinioClient, a.RedisClient)
 	routes.InitPostRoutes(api, postHandler)
 
 	commentHandler := routes.InitCommentHandler(a.Postgres)
