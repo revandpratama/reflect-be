@@ -50,6 +50,7 @@ The main application serves as the public-facing REST API that exposes various s
 - Communication with auth-service for authentication via gRPC protocol
 - Sending logs to the logging service via Kafka
 - Integration with MinIO for object storage
+- Utilizing Redis for data caching
 
 ### Auth Service
 
