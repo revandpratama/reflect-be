@@ -35,7 +35,7 @@ Reflect API is built on a microservices architecture with three main components:
 
 The services communicate via Kafka messaging, with the logging service consuming messages from both the auth service and main app.
 
-![Architecture Diagram](link-to-architecture-diagram.png)
+![Architecture Diagram](https://i.imgur.com/VVHg8Mv.png)
 
 ## 🔌 Services
 
