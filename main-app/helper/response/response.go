@@ -13,6 +13,13 @@ type ResponseWithError struct {
 	Errors  any    `json:"errors"`
 }
 
+type ResponseWithDataAndPagination struct {
+	Status     string            `json:"status"`
+	Message    string            `json:"message"`
+	Data       any               `json:"data"`
+	Pagination *types.Pagination `json:"pagination"`
+}
+
 type ResponseWithoutData struct {
 	Status  string `json:"status"`
 	Message string `json:"message"`
@@ -22,7 +29,7 @@ func NewResponse(response *types.ResponseParams) any {
 	var res any
 	var status string
 
-	if response.StatusCode > 400 {
+	if response.StatusCode >= 400 {
 		status = "error"
 	} else {
 		status = "success"
@@ -46,6 +53,15 @@ func NewResponse(response *types.ResponseParams) any {
 			Status:  status,
 			Message: response.Message,
 			Errors:  response.Errors,
+		}
+	}
+
+	if response.Pagination != nil {
+		res = &ResponseWithDataAndPagination{
+			Status:     status,
+			Message:    response.Message,
+			Data:       response.Data,
+			Pagination: response.Pagination,
 		}
 	}
 
