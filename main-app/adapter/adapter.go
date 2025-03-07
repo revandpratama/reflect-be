@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/minio/minio-go/v7"
+	"github.com/redis/go-redis/v9"
 	"github.com/segmentio/kafka-go"
 	"google.golang.org/grpc"
 	"gorm.io/gorm"
@@ -15,6 +16,7 @@ type Adapter struct {
 	GrcpClient  *grpc.ClientConn
 	KafkaGo     *kafka.Writer
 	MinioClient *minio.Client
+	RedisClient *redis.Client
 }
 
 type Option interface {
