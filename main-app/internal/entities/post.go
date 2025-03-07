@@ -24,8 +24,10 @@ func (Post) TableName() string {
 }
 
 func (p *Post) ToResponse() dto.PostResponse {
-
-	relativePathImageUrl := helper.ToRelativePath(*p.ImageUrl)
+	var relativePathImageUrl string
+	if p.ImageUrl != nil {
+		relativePathImageUrl = helper.ToRelativePath(*p.ImageUrl)
+	}
 
 	return dto.PostResponse{
 		ID:        p.ID,
