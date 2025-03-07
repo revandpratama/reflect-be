@@ -15,11 +15,12 @@ import (
 
 type postService struct {
 	repo        repositories.PostRepository
+	commentRepo repositories.CommentRepository
 	minioClient *minio.Client
 }
 
 type PostService interface {
-	GetAllPosts(ctx context.Context) ([]dto.PostResponse, error)
+	GetAllPosts(ctx context.Context, page, limit int) ([]dto.PostResponse, *types.Pagination, error)
 	GetPostByID(ctx context.Context, id int) (*dto.PostResponse, error)
 	GetPostByUserID(ctx context.Context, userID int) ([]dto.PostResponse, error)
 	CreatePost(ctx context.Context, req *dto.PostRequest) error
@@ -27,14 +28,20 @@ type PostService interface {
 	DeletePost(ctx context.Context, id int) error
 }
 
-func NewPostService(repo repositories.PostRepository, minioCLient *minio.Client) PostService {
+func NewPostService(repo repositories.PostRepository, commentRepo repositories.CommentRepository, minioCLient *minio.Client) PostService {
 	return &postService{
 		repo:        repo,
+		commentRepo: commentRepo,
 		minioClient: minioCLient,
 	}
 }
 
 func (p *postService) CreatePost(ctx context.Context, req *dto.PostRequest) error {
+
+	// userID, err := strconv.Atoi(req.UserID)
+	// if err != nil {
+	// 	return &types.BadRequestError{Message: "invalid user id"}
+	// }
 
 	post := entities.Post{
 		UserID: req.UserID,
@@ -65,18 +72,45 @@ func (p *postService) GetPostByID(ctx context.Context, id int) (*dto.PostRespons
 		return nil, &types.NotFoundError{Message: err.Error()}
 	}
 	postResponse := post.ToResponse()
-	return &postResponse, nil
-}
 
-func (p *postService) GetAllPosts(ctx context.Context) ([]dto.PostResponse, error) {
-
-	post, err := p.repo.GetAllPosts(ctx)
+	comments, err := p.commentRepo.GetCommentByPostID(ctx, post.ID)
 	if err != nil {
 		return nil, &types.InternalServerError{Message: err.Error()}
 	}
 
+	commentResponses := make([]dto.CommentResponse, len(comments))
+	for i := range comments {
+		commentResponses[i] = comments[i].ToResponse()
+	}
+
+	postResponse.Comments = commentResponses
+
+	return &postResponse, nil
+}
+
+func (p *postService) GetAllPosts(ctx context.Context, page, limit int) ([]dto.PostResponse, *types.Pagination, error) {
+
+	post, err := p.repo.GetAllPosts(ctx, page, limit)
+	if err != nil {
+		return nil, nil, &types.InternalServerError{Message: err.Error()}
+	}
+
 	if len(post) == 0 {
-		return nil, &types.NotFoundError{Message: "post not found"}
+		return nil, nil, &types.NotFoundError{Message: "post not found"}
+	}
+
+	totalPage, err := p.repo.GetTotalPage(ctx, limit)
+	if page > totalPage {
+		return nil, nil, &types.NotFoundError{Message: "page not found"}
+	}
+	if err != nil {
+		return nil, nil, &types.InternalServerError{Message: err.Error()}
+	}
+
+	pagination := &types.Pagination{
+		Page:      page,
+		Limit:     limit,
+		TotalPage: totalPage,
 	}
 
 	postResponses := make([]dto.PostResponse, len(post))
@@ -84,7 +118,7 @@ func (p *postService) GetAllPosts(ctx context.Context) ([]dto.PostResponse, erro
 		postResponses[i] = p.ToResponse()
 	}
 
-	return postResponses, nil
+	return postResponses, pagination, nil
 
 }
 
