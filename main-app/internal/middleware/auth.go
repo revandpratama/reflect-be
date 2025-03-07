@@ -27,7 +27,9 @@ func AuthMiddleware() func(c *fiber.Ctx) error {
 			return errorhandler.BuildError(c, &types.UnauthorizedError{Message: "unauthorized"})
 		}
 
-		c.Locals("user", user)
+		c.Locals("user_id", user.ID)
+		c.Locals("user_name", user.Name)
+		c.Locals("user_email", user.Email)
 
 		return c.Next()
 	}
