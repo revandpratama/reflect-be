@@ -46,9 +46,13 @@ func (server *Server) start() {
 	postgresOption := &adapter.PostgresOption{}
 	restOption := &adapter.RestOption{}
 	grpcOption := &adapter.GRPCOption{}
+	redisOption := &adapter.RedisOption{}
+
+	// * initialize adapter
 	a, err := adapter.NewAdapter(
 		kafkaOption,
 		minioOption,
+		redisOption,
 		postgresOption,
 		grpcOption,
 		restOption,
@@ -80,6 +84,7 @@ func (server *Server) start() {
 		restOption,
 		grpcOption,
 		postgresOption,
+		redisOption,
 		minioOption,
 		kafkaOption,
 	)
