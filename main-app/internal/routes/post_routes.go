@@ -12,7 +12,8 @@ import (
 
 func InitPostHandler(db *gorm.DB, minioClient *minio.Client) handlers.PostHandler {
 	repo := repositories.NewPostRepository(db)
-	service := services.NewPostService(repo, minioClient)
+	commentRepo := repositories.NewCommentRepository(db)
+	service := services.NewPostService(repo, commentRepo, minioClient)
 	return handlers.NewPostHandler(service)
 }
 
