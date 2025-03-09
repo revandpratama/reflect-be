@@ -2,6 +2,7 @@ package adapter
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/revandpratama/reflect/config"
 	"github.com/revandpratama/reflect/helper"
@@ -26,6 +27,15 @@ func (p *PostgresOption) Start(a *Adapter) error {
 	if err != nil {
 		return fmt.Errorf("failed to connect to PostgreSQL: %w", err)
 	}
+
+	sqlDB, err := db.DB()
+	if err != nil {
+		return fmt.Errorf("failed to get SQL DB from GORM: %w", err)
+	}
+
+	sqlDB.SetMaxOpenConns(20)
+	sqlDB.SetMaxIdleConns(5)
+	sqlDB.SetConnMaxLifetime(60 * time.Minute)
 
 	a.Postgres = db
 	p.db = db // Store reference for later use
