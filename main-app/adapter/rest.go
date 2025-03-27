@@ -36,6 +36,9 @@ func (r *RestOption) Start(a *Adapter) error {
 	commentHandler := routes.InitCommentHandler(a.Postgres)
 	routes.InitCommentRoutes(api, commentHandler)
 
+	userHandler := routes.InitUserHandler(a.Postgres)
+	routes.InitUserRoutes(api, userHandler)
+
 	go func() {
 		if err := r.app.Listen(fmt.Sprintf(":%v", config.ENV.RESTServerPort)); err != nil {
 			helper.NewLog().Fatal(fmt.Sprintf("Failed to start REST server: %v", err)).ToKafka()
