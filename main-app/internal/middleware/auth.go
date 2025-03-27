@@ -13,18 +13,18 @@ func AuthMiddleware() func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		authHeader := c.Get("Authorization")
 		if authHeader == "" {
-			return errorhandler.BuildError(c, &types.UnauthorizedError{Message: "unauthorized"})
+			return errorhandler.BuildError(c, &types.UnauthorizedError{Message: "unauthorized, token not found"})
 		}
 
 		parts := strings.Split(authHeader, " ")
 		if len(parts) != 2 || parts[0] != "Bearer" {
-			return errorhandler.BuildError(c, &types.UnauthorizedError{Message: "unauthorized"})
+			return errorhandler.BuildError(c, &types.UnauthorizedError{Message: "unauthorized, invalid token format"})
 		}
 
 		encryptedToken := parts[1]
 		user, err := helper.VerifyToken(encryptedToken)
 		if err != nil {
-			return errorhandler.BuildError(c, &types.UnauthorizedError{Message: "unauthorized"})
+			return errorhandler.BuildError(c, &types.UnauthorizedError{Message: "unauthorized, invalid token"})
 		}
 
 		c.Locals("user_id", user.ID)
