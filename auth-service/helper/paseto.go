@@ -32,7 +32,7 @@ func CreateToken(user entities.User) (string, error) {
 	//set rule
 	token.SetIssuedAt(time.Now())
 	token.SetNotBefore(time.Now())
-	token.SetExpiration(time.Now().Add(2 * time.Minute))
+	token.SetExpiration(time.Now().Add(10 * time.Minute))
 
 	//insert paylaod
 	token.SetString("user_id", strconv.Itoa(user.ID))
