@@ -8,3 +8,5 @@ auth-service/.env
 auth-service/client-test
 
 logging-service/log
+
+chat-service/.env
