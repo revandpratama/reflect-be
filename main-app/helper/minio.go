@@ -3,9 +3,11 @@ package helper
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"mime/multipart"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -14,7 +16,7 @@ import (
 )
 
 const (
-	MINIO_POST_BUCKET = "post"
+	MINIO_POST_BUCKET    = "post"
 	MINIO_PROFILE_BUCKET = "profile"
 )
 
@@ -60,7 +62,8 @@ func UploadObject(ctx context.Context, minioClient *minio.Client, bucketName str
 
 	// Add timestamp to avoid conflicts
 	timestamp := time.Now().Format("20060102_150405")
-	objectName = fmt.Sprintf("%s_%s%s", baseName, timestamp, ext)
+	randomNumberStr := strconv.Itoa(rand.Intn(9999999))
+	objectName = fmt.Sprintf("%s_%s_%s%s", baseName, randomNumberStr, timestamp, ext)
 
 	_, err = minioClient.PutObject(ctx, bucketName, objectName, file, rawFile.Size, minio.PutObjectOptions{
 		ContentType: rawFile.Header.Get("Content-Type"),
