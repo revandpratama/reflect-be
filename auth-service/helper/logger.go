@@ -48,17 +48,20 @@ func (l *Log) Error(msg string) *Log {
 var KafkaWriter *kafka.Writer
 
 func (l *Log) ToKafka() {
-
-	err := KafkaWriter.WriteMessages(context.Background(),
-		kafka.Message{
-			Key:   []byte(l.Source),
-			Value: []byte(l.Msg),
-			Time:  l.Timestamp,
-		},
-	)
-	if err != nil {
-		log.Error().Msg(fmt.Sprintf("failed to write messages: %v ", err))
-	}
-
-	fmt.Println("wrote messages")
+	go func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		err := KafkaWriter.WriteMessages(ctx,
+			kafka.Message{
+				Key:   []byte(l.Source),
+				Value: []byte(l.Msg),
+				Time:  l.Timestamp,
+			},
+		)
+		if err != nil {
+			log.Error().Msg(fmt.Sprintf("failed to write messages: %v ", err))
+			return
+		}
+		log.Info().Msgf("write message to kafka: %v", l.Msg)
+	}()
 }
