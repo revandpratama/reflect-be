@@ -111,6 +111,13 @@ func (s *Server) ReadMessageFromKafka() {
 	for {
 		m, err := reader.ReadMessage(context.Background())
 		if err != nil {
+			log.Printf("Error reading from Kafka: %v", err)
+			if err.Error() == "context canceled" {
+				// Expected during shutdown
+			} else {
+				// Non-graceful error - log it
+				log.Printf("Fatal Kafka read error: %v", err)
+			}
 			break
 		}
 		// str := fmt.Sprintf("%s-%s-%v", m.Topic, string(m.Value), m.Time)
