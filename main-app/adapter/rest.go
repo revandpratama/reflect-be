@@ -25,6 +25,14 @@ func (r *RestOption) Start(a *Adapter) error {
 		return c.JSON(fiber.Map{"message": "pong"})
 	})
 
+	r.app.Use(func(c *fiber.Ctx) error {
+		c.Set("Content-Type", "application/json")
+
+		helper.NewLog().Info(fmt.Sprintf("Incoming request: %s %s", c.Method(), c.Path())).ToKafka()
+
+		return c.Next()
+	})
+
 	api := r.app.Group("/api")
 
 	authHandler := routes.InitAuthHandler(a.GrcpClient)
