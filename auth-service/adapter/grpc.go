@@ -22,7 +22,7 @@ func (g *GRPCOption) Start(a *Adapter) error {
 
 	helper.NewLog().Info("initializing grpc server...").ToKafka()
 
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%v", config.ENV.GRPCServerPort)) // Adjust port as needed
+	listener, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%v", config.ENV.GRPCServerPort)) // Adjust port as needed
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)
 	}
