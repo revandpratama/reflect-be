@@ -1,6 +1,6 @@
 proto.txt
 
-deployments/.env
+# deployments/.env
 
 main-app/.env
 
