@@ -73,7 +73,7 @@ A Kafka-based logging system that captures logs from all other services.
 
 ## 🛠️ Technologies
 
-- **Backend**: Go, Fiber HTTP library
+- **Backend**: Go, Fiber HTTP library, grpc
 - **Authentication**: PASETO tokens
 - **Message Broker**: Apache Kafka (segment.io/kafka-go)
 - **Object Storage**: MinIO
@@ -104,11 +104,6 @@ A Kafka-based logging system that captures logs from all other services.
    ```bash
    cp .env.example .env
    # Edit .env with your configuration
-   ```
-
-3. Start the services using Docker Compose:
-   ```bash
-   docker-compose up -d
    ```
 
 
@@ -149,7 +144,7 @@ A Kafka-based logging system that captures logs from all other services.
 ### Running Tests
 
 ```bash
-# Commands to run tests
+# Implemented Soon :)
 ```
 
 ## 🌐 Deployment
@@ -157,7 +152,15 @@ A Kafka-based logging system that captures logs from all other services.
 ### Docker Deployment
 
 ```bash
-# Docker deployment commands
+
+# Run necessary service
+cd /deployments/service-deploy
+docker-compose up --build -d
+
+# Run go app
+cd /deplyoments
+docker-compose up --build -d
+
 ```
 
 ## 🤝 Contributing
