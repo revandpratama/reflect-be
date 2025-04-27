@@ -17,7 +17,7 @@ func (g *GRPCOption) Start(a *Adapter) error {
 
 	helper.NewLog().Info("initializing grpc server...").ToKafka()
 
-	conn, err := grpc.NewClient(fmt.Sprintf(":%v", config.ENV.GRPCServerPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(fmt.Sprintf("auth-service:%v", config.ENV.GRPCServerPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return fmt.Errorf("failed to connect to server: %v", err)
 	}
